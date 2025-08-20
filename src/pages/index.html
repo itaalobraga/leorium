@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Leorium - Página Inicial</title>
+    <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      sizes="16x16"
+      href="/assets/favicon-16x16.svg"
+    />
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.svg" />
+    <meta name="theme-color" content="#ea580c" />
+    <link rel="manifest" href="/assets/manifest.json" />
+    <link rel="stylesheet" href="/styles/styles.css" />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header class="header">
+      <div class="container">
+        <nav class="nav">
+          <div class="logo">
+            <i class="fas fa-graduation-cap"></i>
+            <span>Leorium</span>
+          </div>
+          <div class="nav-links">
+            <a href="/" class="nav-link active">Início</a>
+            <div class="auth-section">
+              <div id="logged-out" class="auth-buttons">
+                <a href="/login" class="btn btn-outline">Login</a>
+              </div>
+              <div id="logged-in" class="auth-buttons" style="display: none">
+                <span class="welcome-text">Bem-vindo, Admin!</span>
+                <a href="/logout" class="btn btn-outline">Logout</a>
+              </div>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <main class="main">
+      <section class="hero">
+        <div class="container">
+          <div class="hero-content">
+            <h1 class="hero-title">Aprenda com os Melhores Cursos Online</h1>
+            <p class="hero-subtitle">
+              Desenvolva suas habilidades com nossos cursos especializados em tecnologia
+            </p>
+            <div class="hero-stats">
+              <div class="stat">
+                <span class="stat-number">500+</span>
+                <span class="stat-label">Alunos</span>
+              </div>
+              <div class="stat">
+                <span class="stat-number">50+</span>
+                <span class="stat-label">Cursos</span>
+              </div>
+              <div class="stat">
+                <span class="stat-number">95%</span>
+                <span class="stat-label">Satisfação</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="courses-section">
+        <div class="container">
+          <div class="section-header">
+            <h2 class="section-title">Nossos Cursos</h2>
+            <p class="section-subtitle">
+              Escolha entre uma variedade de cursos para impulsionar sua carreira
+            </p>
+          </div>
+
+          <div class="filters">
+            <button class="filter-btn active" data-filter="todos">Todos</button>
+            <button class="filter-btn" data-filter="Iniciante">Iniciante</button>
+            <button class="filter-btn" data-filter="Intermediário">Intermediário</button>
+            <button class="filter-btn" data-filter="Avançado">Avançado</button>
+          </div>
+
+          <div id="courses-grid" class="courses-grid"></div>
+
+          <div id="loading" class="loading">
+            <i class="fas fa-spinner fa-spin"></i>
+            <span>Carregando cursos...</span>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-section">
+            <h3>Leorium</h3>
+            <p>Educação de qualidade para o seu futuro profissional.</p>
+            <div class="social-links">
+              <a href="#"><i class="fab fa-facebook"></i></a>
+              <a href="#"><i class="fab fa-twitter"></i></a>
+              <a href="#"><i class="fab fa-instagram"></i></a>
+              <a href="#"><i class="fab fa-linkedin"></i></a>
+            </div>
+          </div>
+          <div class="footer-section">
+            <h3>Links Rápidos</h3>
+            <ul>
+              <li><a href="/">Cursos</a></li>
+              <li><a href="#">Sobre Nós</a></li>
+              <li><a href="#">Contato</a></li>
+              <li><a href="#">Suporte</a></li>
+            </ul>
+          </div>
+          <div class="footer-section">
+            <h3>Contato</h3>
+            <ul>
+              <li><i class="fas fa-phone"></i> (11) 9999-9999</li>
+              <li><i class="fas fa-envelope"></i> contato@leorium.com</li>
+              <li><i class="fas fa-map-marker-alt"></i> São Paulo, SP</li>
+            </ul>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>&copy; 2025 Leorium. Todos os direitos reservados.</p>
+        </div>
+      </div>
+    </footer>
+
+    <script type="module" src="/scripts/script.js"></script>
+  </body>
+</html>

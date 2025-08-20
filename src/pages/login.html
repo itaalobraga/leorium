@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - Leorium</title>
+    <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      sizes="16x16"
+      href="/assets/favicon-16x16.svg"
+    />
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.svg" />
+    <meta name="theme-color" content="#ea580c" />
+    <link rel="manifest" href="/assets/manifest.json" />
+    <link rel="stylesheet" href="/styles/styles.css" />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="login-body">
+    <div class="login-container">
+      <div class="login-card">
+        <div class="login-header">
+          <div class="logo">
+            <i class="fas fa-graduation-cap"></i>
+            <span>Leorium</span>
+          </div>
+          <h1>Entrar na sua conta</h1>
+          <p>Para acessar os detalhes dos cursos, faça login</p>
+        </div>
+
+        <form id="login-form" class="login-form" method="POST" action="/login">
+          <div class="form-group">
+            <label for="username">
+              <i class="fas fa-user"></i>
+              Usuário
+            </label>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              required
+              placeholder="Digite seu usuário"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="password">
+              <i class="fas fa-lock"></i>
+              Senha
+            </label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              required
+              placeholder="Digite sua senha"
+            />
+          </div>
+
+          <div id="error-message" class="error-message" style="display: none">
+            <i class="fas fa-exclamation-circle"></i>
+            Usuário ou senha incorretos!
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-full">
+            <i class="fas fa-sign-in-alt"></i>
+            Entrar
+          </button>
+        </form>
+
+        <div class="login-footer">
+          <div class="demo-credentials">
+            <h3>Credenciais de Demonstração:</h3>
+            <p><strong>Usuário:</strong> admin</p>
+            <p><strong>Senha:</strong> 123456</p>
+          </div>
+
+          <div class="back-link">
+            <a href="/" class="btn btn-outline">
+              <i class="fas fa-arrow-left"></i>
+              Voltar para Cursos
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get("error")) {
+        document.getElementById("error-message").style.display = "block";
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        const loginCard = document.querySelector(".login-card");
+        loginCard.style.opacity = "0";
+        loginCard.style.transform = "translateY(20px)";
+
+        setTimeout(() => {
+          loginCard.style.transition = "all 0.3s ease";
+          loginCard.style.opacity = "1";
+          loginCard.style.transform = "translateY(0)";
+        }, 100);
+      });
+
+      document.getElementById("login-form").addEventListener("submit", function (e) {
+        const username = document.getElementById("username").value.trim();
+        const password = document.getElementById("password").value.trim();
+
+        if (!username || !password) {
+          e.preventDefault();
+          document.getElementById("error-message").textContent =
+            "Por favor, preencha todos os campos!";
+          document.getElementById("error-message").style.display = "block";
+        }
+      });
+    </script>
+  </body>
+</html>

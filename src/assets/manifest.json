@@ -1,0 +1,24 @@
+{
+  "name": "Leorium - Cursos Online",
+  "short_name": "Leorium",
+  "description": "Educação de qualidade para o seu futuro profissional",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#ea580c",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/assets/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "/assets/apple-touch-icon.svg",
+      "sizes": "180x180",
+      "type": "image/svg+xml"
+    }
+  ],
+  "categories": ["education", "productivity"],
+  "lang": "pt-BR"
+}

@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Detalhes do Curso - Leorium</title>
+    <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg" />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      sizes="16x16"
+      href="/assets/favicon-16x16.svg"
+    />
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.svg" />
+    <meta name="theme-color" content="#ea580c" />
+    <link rel="manifest" href="/assets/manifest.json" />
+    <link rel="stylesheet" href="/styles/styles.css" />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header class="header">
+      <div class="container">
+        <nav class="nav">
+          <div class="logo">
+            <i class="fas fa-graduation-cap"></i>
+            <span>Leorium</span>
+          </div>
+          <div class="nav-links">
+            <a href="/" class="nav-link">
+              <i class="fas fa-arrow-left"></i>
+              Voltar aos Cursos
+            </a>
+            <a href="/logout" class="btn btn-outline">Logout</a>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <main class="main">
+      <div id="loading" class="loading">
+        <i class="fas fa-spinner fa-spin"></i>
+        <span>Carregando detalhes do curso...</span>
+      </div>
+
+      <div id="course-details" class="course-details" style="display: none">
+        <div class="container">
+          <div class="course-header">
+            <div class="course-badge">
+              <span id="course-level" class="level-badge"></span>
+            </div>
+            <h1 id="course-title" class="course-title"></h1>
+            <p id="course-description" class="course-description"></p>
+
+            <div class="course-meta">
+              <div class="meta-item">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Início: <span id="course-start-date"></span></span>
+              </div>
+              <div class="meta-item">
+                <i class="fas fa-clock"></i>
+                <span id="course-duration"></span>
+              </div>
+              <div class="meta-item">
+                <i class="fas fa-user-tie"></i>
+                <span id="course-instructor"></span>
+              </div>
+              <div class="meta-item">
+                <i class="fas fa-users"></i>
+                <span id="course-spots"></span> vagas disponíveis
+              </div>
+            </div>
+          </div>
+
+          <div class="course-content">
+            <div class="course-info">
+              <div class="info-section">
+                <h3><i class="fas fa-info-circle"></i> Informações do Curso</h3>
+                <div class="info-grid">
+                  <div class="info-item">
+                    <span class="info-label">Carga Horária:</span>
+                    <span id="course-workload" class="info-value"></span>
+                  </div>
+                  <div class="info-item">
+                    <span class="info-label">Instrutor:</span>
+                    <span id="course-instructor-full" class="info-value"></span>
+                  </div>
+                  <div class="info-item">
+                    <span class="info-label">Nível:</span>
+                    <span id="course-level-full" class="info-value"></span>
+                  </div>
+                  <div class="info-item">
+                    <span class="info-label">Data de Início:</span>
+                    <span id="course-start-full" class="info-value"></span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="description-section">
+                <h3><i class="fas fa-align-left"></i> Descrição Completa</h3>
+                <p id="course-full-description" class="full-description"></p>
+              </div>
+
+              <div class="features-section">
+                <h3><i class="fas fa-star"></i> O que você vai aprender</h3>
+                <ul class="features-list">
+                  <li><i class="fas fa-check"></i> Conceitos fundamentais e avançados</li>
+                  <li><i class="fas fa-check"></i> Projetos práticos e hands-on</li>
+                  <li><i class="fas fa-check"></i> Certificado de conclusão</li>
+                  <li><i class="fas fa-check"></i> Suporte do instrutor</li>
+                  <li><i class="fas fa-check"></i> Acesso vitalício ao conteúdo</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="enrollment-card">
+              <div class="price-section">
+                <h3>Investimento</h3>
+                <div class="price-display">
+                  <span class="currency">R$</span>
+                  <span id="course-price" class="price"></span>
+                  <span class="period">por vaga</span>
+                </div>
+              </div>
+
+              <div class="quantity-section">
+                <h4><i class="fas fa-users"></i> Quantidade de Vagas</h4>
+                <div class="quantity-controls">
+                  <button id="decrease-btn" class="quantity-btn">
+                    <i class="fas fa-minus"></i>
+                  </button>
+                  <input
+                    type="number"
+                    id="quantity-input"
+                    value="1"
+                    min="1"
+                    max="10"
+                    class="quantity-input"
+                  />
+                  <button id="increase-btn" class="quantity-btn">
+                    <i class="fas fa-plus"></i>
+                  </button>
+                </div>
+                <p class="quantity-info">Máximo 10 vagas por vez</p>
+              </div>
+
+              <div class="total-section">
+                <div class="total-display">
+                  <span class="total-label">Valor Total:</span>
+                  <span class="total-price"> R$ <span id="total-value">0,00</span> </span>
+                </div>
+              </div>
+
+              <div class="action-section">
+                <button id="enroll-btn" class="btn btn-primary btn-large">
+                  <i class="fas fa-shopping-cart"></i>
+                  Matricular-se Agora
+                </button>
+                <p class="guarantee-text">
+                  <i class="fas fa-shield-alt"></i>
+                  Garantia de 30 dias ou seu dinheiro de volta
+                </p>
+              </div>
+
+              <div class="contact-section">
+                <h4>Dúvidas?</h4>
+                <p>Entre em contato conosco:</p>
+                <div class="contact-links">
+                  <a href="tel:+5511999999999" class="contact-link">
+                    <i class="fas fa-phone"></i>
+                    (11) 9999-9999
+                  </a>
+                  <a href="mailto:contato@leorium.com" class="contact-link">
+                    <i class="fas fa-envelope"></i>
+                    contato@leorium.com
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="error-message" class="error-section" style="display: none">
+        <div class="container">
+          <div class="error-content">
+            <i class="fas fa-exclamation-triangle"></i>
+            <h2>Curso não encontrado</h2>
+            <p>O curso que você está procurando não foi encontrado ou não existe.</p>
+            <a href="/" class="btn btn-primary">Voltar aos Cursos</a>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-section">
+            <h3>Leorium</h3>
+            <p>Educação de qualidade para o seu futuro profissional.</p>
+          </div>
+          <div class="footer-section">
+            <h3>Links Rápidos</h3>
+            <ul>
+              <li><a href="/">Cursos</a></li>
+              <li><a href="#">Sobre Nós</a></li>
+              <li><a href="#">Contato</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <p>&copy; 2025 Leorium. Todos os direitos reservados.</p>
+        </div>
+      </div>
+    </footer>
+
+    <script type="module" src="/scripts/detalhes.js"></script>
+  </body>
+</html>

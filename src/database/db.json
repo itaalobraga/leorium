@@ -1,0 +1,200 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "username": "admin",
+      "password": "123456",
+      "email": "admin@leorium.com",
+      "name": "Administrador",
+      "profile": "admin"
+    },
+    {
+      "id": 2,
+      "username": "instrutor1",
+      "password": "instrutor123",
+      "email": "maria.silva@leorium.com",
+      "name": "Prof. Maria Silva",
+      "profile": "instructor"
+    }
+  ],
+  "courses": [
+    {
+      "id": 1,
+      "name": "JavaScript Fundamentals",
+      "startDate": "2025-09-01",
+      "duration": "40 horas",
+      "price": 299.99,
+      "description": "Aprenda os fundamentos do JavaScript, desde variáveis e funções até manipulação do DOM e programação assíncrona.",
+      "workload": "40 horas",
+      "instructor": "Prof. Maria Silva",
+      "level": "Iniciante",
+      "spots": 25,
+      "category": "Programação",
+      "skills": ["JavaScript", "HTML", "CSS", "DOM"],
+      "status": "active"
+    },
+    {
+      "id": 2,
+      "name": "React.js Avançado",
+      "startDate": "2025-09-15",
+      "duration": "60 horas",
+      "price": 599.99,
+      "description": "Domine o React.js com hooks, context API, Redux e desenvolvimento de aplicações complexas.",
+      "workload": "60 horas",
+      "instructor": "Prof. João Santos",
+      "level": "Avançado",
+      "spots": 15,
+      "category": "Programação",
+      "skills": ["React", "Redux", "JavaScript", "TypeScript"],
+      "status": "active"
+    },
+    {
+      "id": 3,
+      "name": "HTML5 & CSS3",
+      "startDate": "2025-08-20",
+      "duration": "30 horas",
+      "price": 199.99,
+      "description": "Crie layouts responsivos e modernos utilizando HTML5 semântico e CSS3 avançado.",
+      "workload": "30 horas",
+      "instructor": "Prof. Ana Costa",
+      "level": "Iniciante",
+      "spots": 30,
+      "category": "Frontend",
+      "skills": ["HTML5", "CSS3", "Flexbox", "Grid"],
+      "status": "active"
+    },
+    {
+      "id": 4,
+      "name": "Node.js Backend",
+      "startDate": "2025-10-01",
+      "duration": "50 horas",
+      "price": 449.99,
+      "description": "Desenvolva APIs REST robustas com Node.js, Express e integração com bancos de dados.",
+      "workload": "50 horas",
+      "instructor": "Prof. Carlos Lima",
+      "level": "Intermediário",
+      "spots": 20,
+      "category": "Backend",
+      "skills": ["Node.js", "Express", "MongoDB", "API REST"],
+      "status": "active"
+    },
+    {
+      "id": 5,
+      "name": "Python para Web",
+      "startDate": "2025-10-15",
+      "duration": "45 horas",
+      "price": 379.99,
+      "description": "Construa aplicações web completas com Python, Django e integração com APIs.",
+      "workload": "45 horas",
+      "instructor": "Prof. Lucia Ferreira",
+      "level": "Intermediário",
+      "spots": 18,
+      "category": "Backend",
+      "skills": ["Python", "Django", "PostgreSQL", "APIs"],
+      "status": "active"
+    },
+    {
+      "id": 6,
+      "name": "Vue.js Completo",
+      "startDate": "2025-11-01",
+      "duration": "55 horas",
+      "price": 519.99,
+      "description": "Aprenda Vue.js do básico ao avançado, incluindo Vuex, Vue Router e composição de componentes.",
+      "workload": "55 horas",
+      "instructor": "Prof. Roberto Alves",
+      "level": "Intermediário",
+      "spots": 22,
+      "category": "Frontend",
+      "skills": ["Vue.js", "Vuex", "Vue Router", "JavaScript"],
+      "status": "active"
+    }
+  ],
+  "enrollments": [
+    {
+      "id": 1,
+      "usuarioId": 2,
+      "cursoId": 1,
+      "dataMatricula": "2025-08-10",
+      "quantidade": 1,
+      "valorTotal": 299.99,
+      "status": "ativa"
+    }
+  ],
+  "categories": [
+    {
+      "id": 1,
+      "name": "Programação",
+      "description": "Cursos de linguagens de programação"
+    },
+    {
+      "id": 2,
+      "name": "Frontend",
+      "description": "Desenvolvimento de interfaces de usuário"
+    },
+    {
+      "id": 3,
+      "name": "Backend",
+      "description": "Desenvolvimento de servidores e APIs"
+    },
+    {
+      "id": 4,
+      "name": "Mobile",
+      "description": "Desenvolvimento de aplicações móveis"
+    },
+    {
+      "id": 5,
+      "name": "Data Science",
+      "description": "Ciência de dados e análise"
+    }
+  ],
+  "instructors": [
+    {
+      "id": 1,
+      "name": "Prof. Maria Silva",
+      "email": "maria.silva@leorium.com",
+      "especialidade": "JavaScript, React",
+      "bio": "Desenvolvedora frontend com mais de 8 anos de experiência",
+      "foto": "/images/instrutores/maria-silva.jpg"
+    },
+    {
+      "id": 2,
+      "name": "Prof. João Santos",
+      "email": "joao.santos@leorium.com",
+      "especialidade": "React, Redux, TypeScript",
+      "bio": "Arquiteto de software especializado em aplicações React",
+      "foto": "/images/instrutores/joao-santos.jpg"
+    },
+    {
+      "id": 3,
+      "name": "Prof. Ana Costa",
+      "email": "ana.costa@leorium.com",
+      "especialidade": "HTML, CSS, Design Responsivo",
+      "bio": "Designer e desenvolvedora frontend focada em UX/UI",
+      "foto": "/images/instrutores/ana-costa.jpg"
+    },
+    {
+      "id": 4,
+      "name": "Prof. Carlos Lima",
+      "email": "carlos.lima@leorium.com",
+      "especialidade": "Node.js, APIs, Bancos de Dados",
+      "bio": "Desenvolvedor backend com expertise em Node.js e microserviços",
+      "foto": "/images/instrutores/carlos-lima.jpg"
+    },
+    {
+      "id": 5,
+      "name": "Prof. Lucia Ferreira",
+      "email": "lucia.ferreira@leorium.com",
+      "especialidade": "Python, Django, Data Science",
+      "bio": "Cientista de dados e desenvolvedora Python full-stack",
+      "foto": "/images/instrutores/lucia-ferreira.jpg"
+    },
+    {
+      "id": 6,
+      "name": "Prof. Roberto Alves",
+      "email": "roberto.alves@leorium.com",
+      "especialidade": "Vue.js, JavaScript, Frontend",
+      "bio": "Desenvolvedor frontend especializado no ecossistema Vue.js",
+      "foto": "/images/instrutores/roberto-alves.jpg"
+    }
+  ]
+}

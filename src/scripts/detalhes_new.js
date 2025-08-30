@@ -42,7 +42,7 @@ async function loadCourseDetails(courseId) {
   try {
     showLoading(loadingElement);
 
-    const data = await fetchAPI(`/api/courses/${courseId}`);
+    const data = await fetchAPI(`/courses/${courseId}`);
     courseData = data;
     displayCourseDetails();
     hideLoading(loadingElement);
@@ -144,28 +144,11 @@ function processEnrollment() {
         Quantidade de vagas: ${currentQuantity}
         Valor unitário: ${formatCurrency(courseData.price)}
         Valor total: ${formatCurrency(total)}
+        
+        Nota: A funcionalidade de matrícula está temporariamente desabilitada.
     `;
 
-  showConfirm(message, {
-    title: "Confirmar Matrícula",
-    type: "info",
-    confirmText: "Confirmar",
-    cancelText: "Cancelar",
-  }).then((confirmed) => {
-    if (confirmed) {
-      enrollBtn.disabled = true;
-      enrollBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processando...';
-
-      setTimeout(() => {
-        showAlert(
-          "Matrícula realizada com sucesso! Você receberá as informações de acesso por email.",
-          "success"
-        );
-        enrollBtn.disabled = false;
-        enrollBtn.innerHTML = '<i class="fas fa-shopping-cart"></i> Matricular-se Agora';
-      }, 2000);
-    }
-  });
+  showAlert(message, "info");
 }
 
 function handleKeyboardShortcuts(event) {

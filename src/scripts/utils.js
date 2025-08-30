@@ -1,14 +1,40 @@
+const API_BASE_URL = "http://localhost:3000/api";
+
+const getToken = () => localStorage.getItem("jwt_token");
+const setToken = (token) => localStorage.setItem("jwt_token", token);
+const removeToken = () => {
+  localStorage.removeItem("jwt_token");
+  localStorage.removeItem("user_data");
+};
+
+const getUserData = () => {
+  const userData = localStorage.getItem("user_data");
+  return userData ? JSON.parse(userData) : null;
+};
+
+const setUserData = (userData) => {
+  localStorage.setItem("user_data", JSON.stringify(userData));
+};
+
 export async function fetchAPI(url, options = {}) {
+  const token = getToken();
+
   try {
-    const response = await fetch(url, {
+    const response = await fetch(API_BASE_URL + url, {
       headers: {
         "Content-Type": "application/json",
+        ...(token && { Authorization: `Bearer ${token}` }),
         ...options.headers,
       },
       ...options,
     });
 
     if (!response.ok) {
+      if (response.status === 401) {
+        removeToken();
+        window.location.href = "/login";
+        return;
+      }
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
@@ -18,6 +44,8 @@ export async function fetchAPI(url, options = {}) {
     throw error;
   }
 }
+
+export { setToken, removeToken, getToken, getUserData, setUserData };
 
 export function formatCurrency(value) {
   return new Intl.NumberFormat("pt-BR", {

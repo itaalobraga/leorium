@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 async function checkAuthStatus() {
   try {
-    const data = await fetchAPI("/api/auth");
+    const data = await fetchAPI("/auth");
     isAuthenticated = data.authenticated;
     updateAuthUI();
   } catch (error) {
@@ -52,9 +52,9 @@ async function loadCourses() {
   try {
     showLoading(loadingElement);
 
-    const data = await fetchAPI("/api/courses");
-    courses = data;
-    originalCourses = [...data];
+    const data = await fetchAPI("/courses");
+    courses = data.results || data;
+    originalCourses = [...courses];
 
     displayCourses(courses);
     hideLoading(loadingElement);
@@ -98,26 +98,43 @@ function createCourseCard(course) {
             <div class="course-meta">
                 <div class="meta-item">
                     <i class="fas fa-calendar-alt"></i>
-                    <span>${formatDate(course.startDate)}</span>
+                    <span>${formatDate(course.startDate || course.start_date)}</span>
                 </div>
                 <div class="meta-item">
                     <i class="fas fa-clock"></i>
-                    <span>${course.duration}</span>
+                    <span>${course.workload || course.duration + " horas"}</span>
+                </div>
+                <div class="meta-item">
+                    <i class="fas fa-signal"></i>
+                    <span>${course.level}</span>
                 </div>
             </div>
         </div>
         <div class="course-body">
-            <div class="price-display">
-                <span class="price">${formatCurrency(course.price)}</span>
+            <p class="course-description">${course.description || ""}</p>
+            <div class="course-skills">
+                ${
+                  course.skills && course.skills.length > 0
+                    ? course.skills
+                        .slice(0, 3)
+                        .map((skill) => `<span class="skill-tag">${skill}</span>`)
+                        .join("")
+                    : ""
+                }
             </div>
-            <button 
-                class="details-btn" 
-                data-course-id="${course.id}"
-                ${!isAuthenticated ? 'title="Faça login para ver os detalhes"' : ""}
-            >
-                <i class="fas fa-eye"></i>
-                Ver Detalhes
-            </button>
+            <div class="course-footer">
+                <div class="price-display">
+                    <span class="price">${formatCurrency(course.price)}</span>
+                </div>
+                <button 
+                    class="details-btn" 
+                    data-course-id="${course.id}"
+                    ${!isAuthenticated ? 'title="Faça login para ver os detalhes"' : ""}
+                >
+                    <i class="fas fa-eye"></i>
+                    Ver Detalhes
+                </button>
+            </div>
         </div>
     `;
 
@@ -130,7 +147,7 @@ function viewCourseDetails(courseId) {
     return;
   }
 
-  window.location.href = `/course/${courseId}`;
+  window.location.href = `/detalhes.html?id=${courseId}`;
 }
 
 function setupDetailsButtonListeners() {

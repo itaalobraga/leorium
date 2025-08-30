@@ -6,6 +6,7 @@ import {
   hideLoading,
   showAlert,
   showConfirm,
+  getUserData,
 } from "./utils.js";
 
 let courseData = null;
@@ -20,6 +21,7 @@ const decreaseBtn = document.getElementById("decrease-btn");
 const increaseBtn = document.getElementById("increase-btn");
 const totalValueElement = document.getElementById("total-value");
 const enrollBtn = document.getElementById("enroll-btn");
+const deleteBtn = document.getElementById("delete-btn");
 
 document.addEventListener("DOMContentLoaded", function () {
   const courseId = getCourseIdFromURL();
@@ -33,8 +35,8 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 function getCourseIdFromURL() {
-  const pathParts = window.location.pathname.split("/");
-  const courseId = pathParts[pathParts.length - 1];
+  const urlParams = new URLSearchParams(window.location.search);
+  const courseId = urlParams.get("id");
   return courseId && !isNaN(courseId) ? parseInt(courseId) : null;
 }
 
@@ -42,7 +44,7 @@ async function loadCourseDetails(courseId) {
   try {
     showLoading(loadingElement);
 
-    const data = await fetchAPI(`/api/courses/${courseId}`);
+    const data = await fetchAPI(`/courses/${courseId}`);
     courseData = data;
     displayCourseDetails();
     hideLoading(loadingElement);
@@ -64,25 +66,49 @@ function displayCourseDetails() {
   document.getElementById("course-description").textContent = courseData.description;
   document.getElementById("course-level").textContent = courseData.level;
   document.getElementById("course-start-date").textContent = formatDate(
-    courseData.startDate
+    courseData.startDate || courseData.start_date
   );
-  document.getElementById("course-duration").textContent = courseData.duration;
-  document.getElementById("course-instructor").textContent = courseData.instructor;
+  document.getElementById("course-duration").textContent =
+    courseData.workload || courseData.duration + " horas";
+  document.getElementById("course-instructor").textContent =
+    courseData.instructor_name || "Instrutor";
   document.getElementById("course-spots").textContent = courseData.spots;
   document.getElementById("course-workload").textContent = courseData.workload;
-  document.getElementById("course-instructor-full").textContent = courseData.instructor;
+  document.getElementById("course-instructor-full").textContent =
+    courseData.instructor_name || "Instrutor";
   document.getElementById("course-level-full").textContent = courseData.level;
   document.getElementById("course-start-full").textContent = formatDate(
-    courseData.startDate
+    courseData.startDate || courseData.start_date
   );
   document.getElementById("course-full-description").textContent = courseData.description;
   document.getElementById("course-price").textContent = formatCurrency(courseData.price)
     .replace("R$", "")
     .trim();
 
+  if (courseData.skills && courseData.skills.length > 0) {
+    const skillsContainer = document.getElementById("course-skills");
+    if (skillsContainer) {
+      skillsContainer.innerHTML = courseData.skills
+        .map((skill) => `<span class="skill-tag">${skill}</span>`)
+        .join("");
+    }
+  }
+
   maxQuantity = Math.min(courseData.spots, 10);
   quantityInput.max = maxQuantity;
   updateTotal();
+
+  if (enrollBtn) {
+    enrollBtn.innerHTML = '<i class="fas fa-ban"></i> Matrícula Indisponível';
+    enrollBtn.style.background = "#9ca3af";
+    enrollBtn.style.cursor = "not-allowed";
+  }
+
+  // Mostrar botão de deletar apenas para admins
+  const currentUser = getUserData();
+  if (currentUser && currentUser.role === "admin" && deleteBtn) {
+    deleteBtn.style.display = "block";
+  }
 
   courseDetailsElement.style.display = "block";
 }
@@ -92,6 +118,10 @@ function setupEventListeners() {
   decreaseBtn.addEventListener("click", decreaseQuantity);
   increaseBtn.addEventListener("click", increaseQuantity);
   enrollBtn.addEventListener("click", processEnrollment);
+
+  if (deleteBtn) {
+    deleteBtn.addEventListener("click", handleDeleteCourse);
+  }
 
   document.addEventListener("keydown", handleKeyboardShortcuts);
 }
@@ -144,28 +174,53 @@ function processEnrollment() {
         Quantidade de vagas: ${currentQuantity}
         Valor unitário: ${formatCurrency(courseData.price)}
         Valor total: ${formatCurrency(total)}
+        
+        Nota: A funcionalidade de matrícula está temporariamente desabilitada.
     `;
 
-  showConfirm(message, {
-    title: "Confirmar Matrícula",
-    type: "info",
-    confirmText: "Confirmar",
-    cancelText: "Cancelar",
-  }).then((confirmed) => {
-    if (confirmed) {
-      enrollBtn.disabled = true;
-      enrollBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processando...';
+  showAlert(message, "info");
+}
 
-      setTimeout(() => {
-        showAlert(
-          "Matrícula realizada com sucesso! Você receberá as informações de acesso por email.",
-          "success"
-        );
-        enrollBtn.disabled = false;
-        enrollBtn.innerHTML = '<i class="fas fa-shopping-cart"></i> Matricular-se Agora';
-      }, 2000);
-    }
-  });
+async function handleDeleteCourse() {
+  if (!courseData) return;
+
+  const currentUser = getUserData();
+  if (!currentUser || currentUser.role !== "admin") {
+    showAlert("Você não tem permissão para excluir cursos.", "error");
+    return;
+  }
+
+  const confirmMessage = `Tem certeza que deseja excluir o curso "${courseData.name}"?\n\nEsta ação não pode ser desfeita.`;
+
+  const confirmed = await showConfirm(confirmMessage);
+  if (!confirmed) return;
+
+  try {
+    const deleteButton = document.getElementById("delete-btn");
+    const originalText = deleteButton.innerHTML;
+
+    deleteButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Excluindo...';
+    deleteButton.disabled = true;
+
+    await fetchAPI(`/courses/${courseData.id}`, {
+      method: "DELETE",
+      body: JSON.stringify({ userId: currentUser.id }),
+    });
+
+    showAlert("Curso excluído com sucesso!", "success");
+
+    // Redirecionar para a página principal após 2 segundos
+    setTimeout(() => {
+      window.location.href = "/";
+    }, 2000);
+  } catch (error) {
+    console.error("Erro ao excluir curso:", error);
+    showAlert("Erro ao excluir curso. Tente novamente.", "error");
+
+    const deleteButton = document.getElementById("delete-btn");
+    deleteButton.innerHTML = '<i class="fas fa-trash"></i> Excluir Curso';
+    deleteButton.disabled = false;
+  }
 }
 
 function handleKeyboardShortcuts(event) {

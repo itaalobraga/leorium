@@ -8,7 +8,7 @@ const routes = Router();
 
 const routeMap = [
   ["/users", userRoutes],
-  ["/login", authRoutes],
+  ["/auth", authRoutes],
   ["/categories", categoriesRoutes],
   ["/courses", coursesRoutes],
 ];

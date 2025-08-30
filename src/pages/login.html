@@ -75,7 +75,7 @@
         <div class="login-footer">
           <div class="demo-credentials">
             <h3>Credenciais de Demonstração:</h3>
-            <p><strong>Usuário:</strong> admin</p>
+            <p><strong>Usuário:</strong> admin@leorium.com</p>
             <p><strong>Senha:</strong> 123456</p>
           </div>
 
@@ -89,35 +89,6 @@
       </div>
     </div>
 
-    <script>
-      const urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.get("error")) {
-        document.getElementById("error-message").style.display = "block";
-      }
-
-      document.addEventListener("DOMContentLoaded", function () {
-        const loginCard = document.querySelector(".login-card");
-        loginCard.style.opacity = "0";
-        loginCard.style.transform = "translateY(20px)";
-
-        setTimeout(() => {
-          loginCard.style.transition = "all 0.3s ease";
-          loginCard.style.opacity = "1";
-          loginCard.style.transform = "translateY(0)";
-        }, 100);
-      });
-
-      document.getElementById("login-form").addEventListener("submit", function (e) {
-        const username = document.getElementById("username").value.trim();
-        const password = document.getElementById("password").value.trim();
-
-        if (!username || !password) {
-          e.preventDefault();
-          document.getElementById("error-message").textContent =
-            "Por favor, preencha todos os campos!";
-          document.getElementById("error-message").style.display = "block";
-        }
-      });
-    </script>
+    <script type="module" src="../scripts/login.js"></script>
   </body>
 </html>

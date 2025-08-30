@@ -2,15 +2,25 @@
   "name": "site-cursos",
   "version": "1.0.0",
   "description": "Site para exibição de cursos com autenticação",
-  "main": "server.js",
+  "main": "./src/api/server.js",
   "type": "module",
   "scripts": {
-    "start": "node --watch server.js",
-    "dev": "nodemon server.js"
+    "start": "node --watch ./src/api/server.js",
+    "dev": "nodemon ./src/api/server.js",
+    "migrate": "knex migrate:latest",
+    "migrate:make": "knex migrate:make",
+    "migrate:rollback": "knex migrate:rollback",
+    "seed": "knex seed:run",
+    "seed:make": "knex seed:make"
   },
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "express": "^4.18.2",
-    "express-session": "^1.17.3"
+    "express-session": "^1.17.3",
+    "jsonwebtoken": "^9.0.2",
+    "knex": "^3.1.0",
+    "sqlite3": "^5.1.7",
+    "zod": "^4.1.5"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"

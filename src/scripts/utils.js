@@ -47,6 +47,11 @@ export async function fetchAPI(url, options = {}) {
 
 export { setToken, removeToken, getToken, getUserData, setUserData };
 
+export function logout() {
+  removeToken();
+  window.location.href = "/login";
+}
+
 export function formatCurrency(value) {
   return new Intl.NumberFormat("pt-BR", {
     style: "currency",

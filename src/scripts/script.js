@@ -21,6 +21,16 @@ document.addEventListener("DOMContentLoaded", function () {
   checkAuthStatus();
   loadCourses();
   setupEventListeners();
+
+  const logoutBtn = document.getElementById("logout-btn");
+  if (logoutBtn) {
+    import("./utils.js").then(({ logout }) => {
+      logoutBtn.addEventListener("click", function (e) {
+        e.preventDefault();
+        logout();
+      });
+    });
+  }
 });
 
 async function checkAuthStatus() {

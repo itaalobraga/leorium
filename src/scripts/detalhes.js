@@ -32,6 +32,16 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   setupEventListeners();
+
+  const logoutBtn = document.getElementById("logout-btn");
+  if (logoutBtn) {
+    import("./utils.js").then(({ logout }) => {
+      logoutBtn.addEventListener("click", function (e) {
+        e.preventDefault();
+        logout();
+      });
+    });
+  }
 });
 
 function getCourseIdFromURL() {

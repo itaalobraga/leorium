@@ -15,9 +15,15 @@ export async function createCourse(req, res, next) {
   }
 
   try {
-    const [{ id }] = await knex("courses").insert(courseValidation.data).returning("id");
+    const { data: course } = courseValidation;
 
-    return res.status(201).json({ id, ...courseValidation.data });
+    const normalizedSkills = JSON.stringify(course.skills || []);
+
+    const [{ id }] = await knex("courses")
+      .insert({ ...course, skills: normalizedSkills })
+      .returning("id");
+
+    return res.status(201).json({ id, ...course });
   } catch (error) {
     console.error(error);
 

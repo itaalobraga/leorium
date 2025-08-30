@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 
-const verifyToken = (req, res, next) => {
+export const verifyToken = async (req, res, next) => {
   const authHeader = req.header("Authorization");
 
   if (!authHeader) {
@@ -20,5 +20,3 @@ const verifyToken = (req, res, next) => {
     res.status(401).json({ error: "Token inválido" });
   }
 };
-
-export { verifyToken };

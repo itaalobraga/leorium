@@ -15,12 +15,17 @@ export async function createUser(req, res, next) {
     });
   }
 
-  await existsInDb({
+  const emailExists = await existsInDb({
     table: "users",
     column: "email",
     value: user.email,
-    res,
   });
+
+  if (emailExists) {
+    return res.status(400).json({
+      error: "Email já está em uso",
+    });
+  }
 
   const hashedPassword = await bcrypt.hash(user.password, 10);
 
@@ -32,6 +37,7 @@ export async function createUser(req, res, next) {
     return res.status(201).json(rest);
   } catch (error) {
     console.error(error);
+
     return res.status(500).json({
       error: "Erro ao criar usuário",
     });

@@ -9,12 +9,12 @@ export async function up(knex) {
     table.string("workload").notNullable();
     table.integer("instructor_id").references("id").inTable("users").notNullable();
     table
-      .enum("level", ["Avançado", "Intermediário", "Básico", "Iniciante"])
+      .enum("level", ["avancado", "intermediario", "basico", "iniciante"])
       .notNullable();
     table.integer("spots").notNullable();
     table.integer("category_id").references("id").inTable("categories").notNullable();
     table.specificType("skills", "text[]").notNullable();
-    table.enum("status", ["active", "inactive"]).notNullable();
+    table.enum("status", ["ativo", "inativo"]).notNullable();
     table.timestamp("created_at").defaultTo(knex.fn.now());
     table.timestamp("updated_at").defaultTo(null);
   });

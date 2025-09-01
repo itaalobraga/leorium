@@ -30,9 +30,7 @@ export async function updateCourse(req, res) {
     if (Array.isArray(updateData.skills)) {
       updateData.skills = JSON.stringify(updateData.skills);
     }
-    await knex("courses")
-      .update(updateData)
-      .where("id", courseId);
+    await knex("courses").update(updateData).where("id", courseId);
     return res.status(200).json({ message: "Curso atualizado com sucesso" });
   } catch (error) {
     console.error(error);

@@ -34,11 +34,11 @@ export async function createUser(req, res, next) {
   try {
     await knex("users").insert({ ...rest, password: hashedPassword });
 
-    return res.status(201).json(rest);
+    res.status(201).json(rest);
   } catch (error) {
     console.error(error);
 
-    return res.status(500).json({
+    res.status(500).json({
       error: "Erro ao criar usuário",
     });
   }

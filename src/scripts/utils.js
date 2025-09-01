@@ -31,7 +31,20 @@ export async function fetchAPI(url, options = {}) {
 
     if (!response.ok) {
       if (response.status === 401) {
+        let errorMsg = "";
+        try {
+          const text = await response.text();
+          try {
+            const errJson = JSON.parse(text);
+            errorMsg = errJson?.error || "";
+          } catch {
+            errorMsg = text;
+          }
+        } catch {}
         removeToken();
+        if (errorMsg === "Token expirado") {
+          alert("Sua sessão expirou. Faça login novamente.");
+        }
         window.location.href = "/login";
         return;
       }

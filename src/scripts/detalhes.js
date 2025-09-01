@@ -114,10 +114,17 @@ function displayCourseDetails() {
     enrollBtn.style.cursor = "not-allowed";
   }
 
-  // Mostrar botão de deletar apenas para admins
+  // Mostrar botões de editar e deletar apenas para admins
   const currentUser = getUserData();
-  if (currentUser && currentUser.role === "admin" && deleteBtn) {
-    deleteBtn.style.display = "block";
+  const editBtn = document.getElementById("edit-btn");
+  if (currentUser && currentUser.role === "admin") {
+    if (deleteBtn) deleteBtn.style.display = "block";
+    if (editBtn) {
+      editBtn.style.display = "block";
+      editBtn.onclick = function () {
+        window.location.href = `/editar-curso.html?id=${courseData.id}`;
+      };
+    }
   }
 
   courseDetailsElement.style.display = "block";

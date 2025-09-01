@@ -1,16 +1,18 @@
 import { knex } from "../../../database/knex.js";
+import { paginate } from "../../../utils/paginate.js";
 
 export async function getCourses(req, res, next) {
   const { page, limit } = req.query;
 
+  const { search } = req.query;
+
   try {
+    const query = knex("courses").select("*");
+
     const {
       data: courses,
       pagination: { currentPage, total, perPage },
-    } = await knex("courses").paginate({
-      perPage: limit || 10,
-      currentPage: page || 1,
-    });
+    } = await paginate({ query, limit, page });
 
     const normalizedData = courses.map((course) => ({
       ...course,

@@ -31,6 +31,14 @@ document.addEventListener("DOMContentLoaded", function () {
       });
     });
   }
+
+  const criarCursoBtn = document.getElementById("criar-curso-btn");
+  import("./utils.js").then(({ getUserData }) => {
+    const user = getUserData();
+    if (criarCursoBtn && user && user.role === "admin") {
+      criarCursoBtn.style.display = "inline-block";
+    }
+  });
 });
 
 async function checkAuthStatus() {

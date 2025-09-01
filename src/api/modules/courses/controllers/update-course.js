@@ -1,12 +1,12 @@
 import z from "zod";
-import { updateCourseSchema } from "../schemas/update-course.js";
 import { existsInDb } from "../../../utils/exists-in-db.js";
-import { knex } from "../../../database/knex";
+import { knex } from "../../../database/knex.js";
+import { createCourseSchema } from "../schemas/create-course.js";
 
 export async function updateCourse(req, res) {
   const { id: courseId } = req.params;
 
-  const updateCourseValidation = updateCourseSchema.safeParse(req.body);
+  const updateCourseValidation = createCourseSchema.safeParse(req.body);
 
   if (!updateCourseValidation.success) {
     return res
@@ -25,7 +25,14 @@ export async function updateCourse(req, res) {
   }
 
   try {
-    await knex.update("courses").set(updateCourseValidation.data).where("id", courseId);
+    const updateData = { ...updateCourseValidation.data, updated_at: knex.fn.now() };
+    // skills deve ser salvo como string JSON
+    if (Array.isArray(updateData.skills)) {
+      updateData.skills = JSON.stringify(updateData.skills);
+    }
+    await knex("courses")
+      .update(updateData)
+      .where("id", courseId);
     return res.status(200).json({ message: "Curso atualizado com sucesso" });
   } catch (error) {
     console.error(error);

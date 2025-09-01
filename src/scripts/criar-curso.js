@@ -1,4 +1,3 @@
-// --- Select com busca paginada para instrutor e categoria ---
 function setupPaginatedSelect(selectId, fetchFn, placeholder) {
   const select = document.getElementById(selectId);
   let page = 1;
@@ -21,7 +20,9 @@ function setupPaginatedSelect(selectId, fetchFn, placeholder) {
         select.innerHTML = `<option value="">${placeholder}</option>`;
       }
       list.forEach((item) => {
-        if (!Array.from(select.options).some((opt) => opt.value == item.value)) {
+        if (
+          !Array.from(select.options).some((opt) => opt.value == item.value)
+        ) {
           const opt = document.createElement("option");
           opt.value = item.value;
           opt.textContent = item.label;
@@ -31,7 +32,8 @@ function setupPaginatedSelect(selectId, fetchFn, placeholder) {
       hasMore = list.length > 0;
       if (hasMore) page++;
     } catch {
-      if (reset) select.innerHTML = `<option value="">Erro ao carregar opções</option>`;
+      if (reset)
+        select.innerHTML = `<option value="">Erro ao carregar opções</option>`;
     }
     loading = false;
   }
@@ -56,7 +58,6 @@ function setupPaginatedSelect(selectId, fetchFn, placeholder) {
     page = 1;
     hasMore = true;
     loadOptions({ reset: true, search: query });
-    // Limpa seleção ao buscar
     select.selectedIndex = 0;
   });
 }
@@ -75,7 +76,11 @@ async function fetchCategories(query, page = 1) {
   return res.results || res;
 }
 
-setupPaginatedSelect("instructor", fetchInstructors, "Selecione um instrutor...");
+setupPaginatedSelect(
+  "instructor",
+  fetchInstructors,
+  "Selecione um instrutor..."
+);
 setupPaginatedSelect("category", fetchCategories, "Selecione uma categoria...");
 import { fetchAPI, getUserData, logout } from "./utils.js";
 
@@ -109,7 +114,6 @@ form.addEventListener("submit", async (e) => {
   data.price = parseFloat(data.price);
   data.spots = parseInt(data.spots);
 
-  // Pega o id do instrutor e categoria selecionados
   data.instructor_id = Number(document.getElementById("instructor").value);
   data.category_id = Number(document.getElementById("category").value);
   data.duration = document.getElementById("duration")?.value || "";
@@ -128,7 +132,8 @@ form.addEventListener("submit", async (e) => {
     if (response && response.id) {
       window.location.href = `/detalhes.html?id=${response.id}`;
     } else {
-      messageDiv.textContent = "Curso criado, mas não foi possível redirecionar.";
+      messageDiv.textContent =
+        "Curso criado, mas não foi possível redirecionar.";
       messageDiv.style.color = "orange";
       form.reset();
     }

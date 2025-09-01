@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://localhost:3000/api";
+const API_BASE_URL = "http://localhost:3030/api";
 
 const getToken = () => localStorage.getItem("jwt_token");
 const setToken = (token) => localStorage.setItem("jwt_token", token);
@@ -159,16 +159,20 @@ export function createModal(options = {}) {
     onCancel();
   });
 
-  modalOverlay.querySelector('[data-action="confirm"]').addEventListener("click", () => {
-    closeModal();
-    onConfirm();
-  });
+  modalOverlay
+    .querySelector('[data-action="confirm"]')
+    .addEventListener("click", () => {
+      closeModal();
+      onConfirm();
+    });
 
   if (showCancel) {
-    modalOverlay.querySelector('[data-action="cancel"]').addEventListener("click", () => {
-      closeModal();
-      onCancel();
-    });
+    modalOverlay
+      .querySelector('[data-action="cancel"]')
+      .addEventListener("click", () => {
+        closeModal();
+        onCancel();
+      });
   }
 
   modalOverlay.addEventListener("click", (e) => {

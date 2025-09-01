@@ -10,7 +10,7 @@ const coursesRoutes = Router();
 
 coursesRoutes.post("/", verifyToken, createCourse);
 
-coursesRoutes.get("/", verifyToken, getCourses);
+coursesRoutes.get("/", getCourses);
 
 coursesRoutes.get("/:id", verifyToken, getCourseById);
 

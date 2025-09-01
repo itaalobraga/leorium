@@ -4,7 +4,11 @@ export async function getCourseById(req, res) {
   const { id } = req.params;
 
   try {
-    const course = await knex("courses").select("*").where({ id }).first();
+    const course = await knex("courses")
+      .leftJoin("users", "courses.instructor_id", "users.id")
+      .select("courses.*", "users.name as instructor_name")
+      .where("courses.id", id)
+      .first();
 
     if (!course) {
       return res.status(404).json({
@@ -12,7 +16,12 @@ export async function getCourseById(req, res) {
       });
     }
 
-    const normalizedSkills = JSON.parse(course.skills);
+    let normalizedSkills;
+    try {
+      normalizedSkills = JSON.parse(course.skills);
+    } catch {
+      normalizedSkills = Array.isArray(course.skills) ? course.skills : [];
+    }
 
     const processedCourse = {
       ...course,

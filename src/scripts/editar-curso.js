@@ -1,6 +1,5 @@
 import { fetchAPI, getUserData, logout } from "./utils.js";
 
-// Redireciona se não for admin
 const user = getUserData();
 if (!user || user.role !== "admin") {
   window.location.href = "/index.html";
@@ -45,7 +44,9 @@ function setupPaginatedSelect(selectId, fetchFn, placeholder, selectedValue) {
         select.innerHTML = `<option value="">${placeholder}</option>`;
       }
       list.forEach((item) => {
-        if (!Array.from(select.options).some((opt) => opt.value == item.value)) {
+        if (
+          !Array.from(select.options).some((opt) => opt.value == item.value)
+        ) {
           const opt = document.createElement("option");
           opt.value = item.value;
           opt.textContent = item.label;
@@ -58,7 +59,8 @@ function setupPaginatedSelect(selectId, fetchFn, placeholder, selectedValue) {
       hasMore = list.length > 0;
       if (hasMore) page++;
     } catch {
-      if (reset) select.innerHTML = `<option value="">Erro ao carregar opções</option>`;
+      if (reset)
+        select.innerHTML = `<option value="">Erro ao carregar opções</option>`;
     }
     loading = false;
   }
@@ -83,7 +85,6 @@ function setupPaginatedSelect(selectId, fetchFn, placeholder, selectedValue) {
     loadOptions({ reset: true, search: query });
     select.selectedIndex = 0;
   });
-  // Carregar opções iniciais
   loadOptions({ reset: true });
 }
 
@@ -91,7 +92,6 @@ async function loadCourseData() {
   if (!courseId) return;
   try {
     const data = await fetchAPI(`/courses/${courseId}`);
-    // Preencher campos
     form.instructorId.value = data.instructor_id;
     form.categoryId.value = data.category_id;
     form.name.value = data.name;
@@ -100,10 +100,12 @@ async function loadCourseData() {
     form.workload.value = data.workload;
     form.duration.value = data.duration;
     form.level.value = data.level;
-    form.startDate.value = (data.startDate || data.start_date || "").slice(0, 10);
+    form.startDate.value = (data.startDate || data.start_date || "").slice(
+      0,
+      10
+    );
     form.spots.value = data.spots;
     form.skills.value = (data.skills || []).join(", ");
-    // Setup selects com valor selecionado
     setupPaginatedSelect(
       "instructor",
       fetchInstructors,

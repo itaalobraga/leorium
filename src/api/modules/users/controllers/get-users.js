@@ -19,7 +19,6 @@ export async function getUsers(req, res) {
       limit,
     });
 
-    // Formatar para {value, label}
     const formatted = users.map((u) => ({ value: u.id, label: u.name }));
     res.json({ results: formatted, page: currentPage, total, limit: perPage });
   } catch (error) {

@@ -73,7 +73,8 @@ function displayCourseDetails() {
   if (!courseData) return;
 
   document.getElementById("course-title").textContent = courseData.name;
-  document.getElementById("course-description").textContent = courseData.description;
+  document.getElementById("course-description").textContent =
+    courseData.description;
   document.getElementById("course-level").textContent = courseData.level;
   document.getElementById("course-start-date").textContent = formatDate(
     courseData.startDate || courseData.start_date
@@ -90,8 +91,11 @@ function displayCourseDetails() {
   document.getElementById("course-start-full").textContent = formatDate(
     courseData.startDate || courseData.start_date
   );
-  document.getElementById("course-full-description").textContent = courseData.description;
-  document.getElementById("course-price").textContent = formatCurrency(courseData.price)
+  document.getElementById("course-full-description").textContent =
+    courseData.description;
+  document.getElementById("course-price").textContent = formatCurrency(
+    courseData.price
+  )
     .replace("R$", "")
     .trim();
 
@@ -114,7 +118,6 @@ function displayCourseDetails() {
     enrollBtn.style.cursor = "not-allowed";
   }
 
-  // Mostrar botões de editar e deletar apenas para admins
   const currentUser = getUserData();
   const editBtn = document.getElementById("edit-btn");
   if (currentUser && currentUser.role === "admin") {
@@ -147,7 +150,9 @@ function updateTotal() {
   if (!courseData) return;
 
   const total = courseData.price * currentQuantity;
-  totalValueElement.textContent = formatCurrency(total).replace("R$", "").trim();
+  totalValueElement.textContent = formatCurrency(total)
+    .replace("R$", "")
+    .trim();
 }
 
 function handleQuantityChange() {
@@ -216,7 +221,8 @@ async function handleDeleteCourse() {
     const deleteButton = document.getElementById("delete-btn");
     const originalText = deleteButton.innerHTML;
 
-    deleteButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Excluindo...';
+    deleteButton.innerHTML =
+      '<i class="fas fa-spinner fa-spin"></i> Excluindo...';
     deleteButton.disabled = true;
 
     await fetchAPI(`/courses/${courseData.id}`, {
@@ -226,7 +232,6 @@ async function handleDeleteCourse() {
 
     showAlert("Curso excluído com sucesso!", "success");
 
-    // Redirecionar para a página principal após 2 segundos
     setTimeout(() => {
       window.location.href = "/";
     }, 2000);
@@ -299,6 +304,8 @@ const observer = new IntersectionObserver((entries) => {
 }, observerOptions);
 
 document.addEventListener("DOMContentLoaded", () => {
-  const elementsToAnimate = document.querySelectorAll(".course-info, .enrollment-card");
+  const elementsToAnimate = document.querySelectorAll(
+    ".course-info, .enrollment-card"
+  );
   elementsToAnimate.forEach((el) => observer.observe(el));
 });

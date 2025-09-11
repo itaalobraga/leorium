@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", function () {
   import("./utils.js").then(({ getUserData }) => {
     const user = getUserData();
     if (criarCursoBtn && user && user.role === "admin") {
-      criarCursoBtn.style.display = "inline-block";
+      criarCursoBtn.hidden = false;
     }
   });
 });
@@ -116,11 +116,15 @@ function createCourseCard(course) {
             <div class="course-meta">
                 <div class="meta-item">
                     <i class="fas fa-calendar-alt"></i>
-                    <span>${formatDate(course.startDate || course.start_date)}</span>
+                    <span>${formatDate(
+                      course.startDate || course.start_date
+                    )}</span>
                 </div>
                 <div class="meta-item">
                     <i class="fas fa-clock"></i>
-                    <span>${course.workload || course.duration + " horas"}</span>
+                    <span>${
+                      course.workload || course.duration + " horas"
+                    }</span>
                 </div>
                 <div class="meta-item">
                     <i class="fas fa-signal"></i>
@@ -135,7 +139,9 @@ function createCourseCard(course) {
                   course.skills && course.skills.length > 0
                     ? course.skills
                         .slice(0, 3)
-                        .map((skill) => `<span class="skill-tag">${skill}</span>`)
+                        .map(
+                          (skill) => `<span class="skill-tag">${skill}</span>`
+                        )
                         .join("")
                     : ""
                 }
@@ -147,7 +153,11 @@ function createCourseCard(course) {
                 <button 
                     class="details-btn" 
                     data-course-id="${course.id}"
-                    ${!isAuthenticated ? 'title="Faça login para ver os detalhes"' : ""}
+                    ${
+                      !isAuthenticated
+                        ? 'title="Faça login para ver os detalhes"'
+                        : ""
+                    }
                 >
                     <i class="fas fa-eye"></i>
                     Ver Detalhes
@@ -230,7 +240,11 @@ function filterCourses(filter) {
 function inferLevel(courseName) {
   const name = courseName.toLowerCase();
 
-  if (name.includes("fundamental") || name.includes("html") || name.includes("css")) {
+  if (
+    name.includes("fundamental") ||
+    name.includes("html") ||
+    name.includes("css")
+  ) {
     return "Iniciante";
   } else if (name.includes("avançado") || name.includes("react")) {
     return "Avançado";
@@ -266,7 +280,10 @@ function setupMobileMenu() {
     });
 
     document.addEventListener("click", function (event) {
-      if (!mobileMenuBtn.contains(event.target) && !mobileMenu.contains(event.target)) {
+      if (
+        !mobileMenuBtn.contains(event.target) &&
+        !mobileMenu.contains(event.target)
+      ) {
         mobileMenu.classList.remove("active");
       }
     });
@@ -377,5 +394,8 @@ window.addEventListener("scroll", function () {
   }
 });
 
-if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
+if (
+  window.matchMedia &&
+  window.matchMedia("(prefers-color-scheme: dark)").matches
+) {
 }

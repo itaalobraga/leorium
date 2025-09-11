@@ -30,6 +30,14 @@ app.get("/login", (req, res) => {
   res.sendFile(path.join(__dirname, "..", "pages", "login.html"));
 });
 
+app.get("/usuarios", (req, res) => {
+  res.sendFile(path.join(__dirname, "..", "pages", "usuarios.html"));
+});
+
+app.get("/usuario", (req, res) => {
+  res.sendFile(path.join(__dirname, "..", "pages", "usuario.html"));
+});
+
 app.listen(PORT, () => {
   console.log(`Servidor rodando em http://localhost:${PORT}`);
 });

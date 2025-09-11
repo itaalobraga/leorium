@@ -43,9 +43,18 @@ export async function fetchAPI(url, options = {}) {
         } catch {}
         removeToken();
         if (errorMsg === "Token expirado") {
-          alert("Sua sessão expirou. Faça login novamente.");
+          createModal({
+            title: "Sessão Expirada",
+            message: "Sua sessão expirou. Faça login novamente.",
+            type: "warning",
+            confirmText: "OK",
+            onConfirm: () => {
+              window.location.href = "/login";
+            },
+          });
+        } else {
+          window.location.href = "/login";
         }
-        window.location.href = "/login";
         return;
       }
       throw new Error(`HTTP error! status: ${response.status}`);
@@ -159,20 +168,16 @@ export function createModal(options = {}) {
     onCancel();
   });
 
-  modalOverlay
-    .querySelector('[data-action="confirm"]')
-    .addEventListener("click", () => {
-      closeModal();
-      onConfirm();
-    });
+  modalOverlay.querySelector('[data-action="confirm"]').addEventListener("click", () => {
+    closeModal();
+    onConfirm();
+  });
 
   if (showCancel) {
-    modalOverlay
-      .querySelector('[data-action="cancel"]')
-      .addEventListener("click", () => {
-        closeModal();
-        onCancel();
-      });
+    modalOverlay.querySelector('[data-action="cancel"]').addEventListener("click", () => {
+      closeModal();
+      onCancel();
+    });
   }
 
   modalOverlay.addEventListener("click", (e) => {

@@ -1,15 +1,69 @@
-import { showMessage, hideMessage, navigateWithToken } from "./utils.js";
+import { createModal, showConfirm, showLoading, hideLoading } from "./utils.js";
 
-const apiUrl = "http://localhost:3000/api";
+const apiUrl = "http://localhost:3030/api";
 let currentPage = 1;
 let totalPages = 1;
 let searchQuery = "";
 
-// Event listeners
+function translateRole(role) {
+  const translations = {
+    admin: "Administrador",
+    instructor: "Instrutor",
+    student: "Estudante",
+  };
+  return translations[role] || role;
+}
+
+function createRoleBadge(role) {
+  const roleConfig = {
+    admin: {
+      label: "Administrador",
+      color: "#dc2626",
+      bgColor: "#fef2f2",
+      borderColor: "#fecaca",
+    },
+    instructor: {
+      label: "Instrutor",
+      color: "#059669",
+      bgColor: "#f0fdf4",
+      borderColor: "#bbf7d0",
+    },
+    student: {
+      label: "Estudante",
+      color: "#2563eb",
+      bgColor: "#eff6ff",
+      borderColor: "#bfdbfe",
+    },
+  };
+
+  const config = roleConfig[role] || {
+    label: role,
+    color: "#6b7280",
+    bgColor: "#f9fafb",
+    borderColor: "#e5e7eb",
+  };
+
+  return `
+    <span style="
+      display: inline-flex;
+      align-items: center;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: ${config.color};
+      background-color: ${config.bgColor};
+      border: 1px solid ${config.borderColor};
+    ">
+      ${config.label}
+    </span>
+  `;
+}
+
 document.addEventListener("DOMContentLoaded", () => {
-  const token = localStorage.getItem("authToken");
+  const token = localStorage.getItem("jwt_token");
   if (!token) {
-    window.location.href = "/src/pages/login.html";
+    window.location.href = "login.html";
     return;
   }
 
@@ -18,232 +72,249 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function setupEventListeners() {
-  // Search input
   const searchInput = document.getElementById("search-input");
+
   let searchTimeout;
 
-  searchInput.addEventListener("input", (e) => {
-    clearTimeout(searchTimeout);
-    searchTimeout = setTimeout(() => {
-      searchQuery = e.target.value.trim();
-      currentPage = 1;
-      loadUsers();
-    }, 500);
-  });
+  if (searchInput) {
+    searchInput.addEventListener("input", (e) => {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => {
+        searchQuery = e.target.value.trim();
+        currentPage = 1;
+        loadUsers();
+      }, 500);
+    });
+  }
 
-  // Create user button
-  document.getElementById("create-user-btn").addEventListener("click", () => {
-    window.location.href = "/src/pages/usuario.html";
-  });
+  const logoutBtn = document.getElementById("logout-btn");
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      localStorage.removeItem("jwt_token");
+      localStorage.removeItem("user_data");
+      window.location.href = "login.html";
+    });
+  }
 
-  // Logout button
-  document.getElementById("logout-btn").addEventListener("click", (e) => {
-    e.preventDefault();
-    localStorage.removeItem("authToken");
-    window.location.href = "/src/pages/login.html";
-  });
+  const prevBtn = document.getElementById("prev-btn");
+  const nextBtn = document.getElementById("next-btn");
+
+  if (prevBtn) {
+    prevBtn.addEventListener("click", () => {
+      if (currentPage > 1) {
+        currentPage--;
+        loadUsers();
+      }
+    });
+  }
+
+  if (nextBtn) {
+    nextBtn.addEventListener("click", () => {
+      if (currentPage < totalPages) {
+        currentPage++;
+        loadUsers();
+      }
+    });
+  }
 }
 
 async function loadUsers() {
-  const loadingState = document.getElementById("loading-state");
-  const emptyState = document.getElementById("empty-state");
-  const usersList = document.getElementById("users-list");
-  const pagination = document.getElementById("pagination");
-
-  // Show loading
-  loadingState.style.display = "block";
-  emptyState.style.display = "none";
-  usersList.style.display = "none";
-  pagination.style.display = "none";
-
   try {
-    const token = localStorage.getItem("authToken");
-    const params = new URLSearchParams({
+    const token = localStorage.getItem("jwt_token");
+
+    const queryParams = new URLSearchParams({
       page: currentPage,
       limit: 10,
-      ...(searchQuery && { search: searchQuery }),
     });
 
-    const response = await fetch(`${apiUrl}/users?${params}`, {
+    if (searchQuery) {
+      queryParams.append("search", searchQuery);
+    }
+
+    const response = await fetch(`${apiUrl}/users?${queryParams}`, {
+      method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
       },
     });
 
-    if (!response.ok) {
+    if (response.ok) {
+      const result = await response.json();
+
+      const users = result.data || [];
+      const pagination = result.pagination || {};
+      totalPages = pagination.totalPages || 1;
+
+      displayUsers(users);
+      updatePagination();
+    } else {
       if (response.status === 401) {
-        showMessage("Token expirado. Redirecionando para login...", "error");
-        setTimeout(() => {
-          localStorage.removeItem("authToken");
-          window.location.href = "/src/pages/login.html";
-        }, 1500);
+        localStorage.removeItem("jwt_token");
+        window.location.href = "login.html";
         return;
       }
-      throw new Error("Erro ao carregar usuários");
+      createModal({
+        title: "Erro",
+        message: "Erro ao carregar usuários",
+        type: "error",
+        confirmText: "OK",
+      });
     }
+  } catch (error) {
+    createModal({
+      title: "Erro de Conexão",
+      message: "Erro de conexão ao carregar usuários",
+      type: "error",
+      confirmText: "OK",
+    });
+  }
+}
 
-    const result = await response.json();
-    const { data: users, pagination: paginationData } = result;
+function displayUsers(users) {
+  const tableBody = document.getElementById("users-table-body");
 
-    // Hide loading
-    loadingState.style.display = "none";
+  const usersList = document.getElementById("users-list");
 
-    if (!users || users.length === 0) {
-      emptyState.style.display = "block";
+  if (!tableBody && !usersList) {
+    return;
+  }
+
+  const container = usersList || tableBody;
+  container.innerHTML = "";
+
+  if (users.length === 0) {
+    container.innerHTML = `
+      <div style="text-align: center; padding: 20px;">
+        Nenhum usuário encontrado
+      </div>
+    `;
+    return;
+  }
+
+  const table = document.createElement("table");
+  table.style.width = "100%";
+  table.style.borderCollapse = "collapse";
+
+  const thead = document.createElement("thead");
+  thead.innerHTML = `
+    <tr style="border-bottom: 1px solid #e5e7eb;">
+      <th style="padding: 1rem; text-align: left;">ID</th>
+      <th style="padding: 1rem; text-align: left;">Nome</th>
+      <th style="padding: 1rem; text-align: left;">Email</th>
+      <th style="padding: 1rem; text-align: left;">Função</th>
+      <th style="padding: 1rem; text-align: left;">Ações</th>
+    </tr>
+  `;
+
+  const tbody = document.createElement("tbody");
+
+  users.forEach((user) => {
+    const row = document.createElement("tr");
+    row.style.borderBottom = "1px solid #f3f4f6";
+    row.innerHTML = `
+      <td style="padding: 1rem;">${user.id}</td>
+      <td style="padding: 1rem;">${user.name}</td>
+      <td style="padding: 1rem;">${user.email}</td>
+      <td style="padding: 1rem;">
+        ${createRoleBadge(user.role)}
+      </td>
+      <td style="padding: 1rem;">
+        <button onclick="editUser(${
+          user.id
+        })" class="btn btn-edit" style="margin-right: 0.5rem;">Editar</button>
+        <button onclick="deleteUser(${user.id})" class="btn btn-delete">Excluir</button>
+      </td>
+    `;
+    tbody.appendChild(row);
+  });
+
+  table.appendChild(thead);
+  table.appendChild(tbody);
+  container.appendChild(table);
+}
+
+function updatePagination() {
+  const pageInfo = document.getElementById("page-info");
+  const prevBtn = document.getElementById("prev-btn");
+  const nextBtn = document.getElementById("next-btn");
+
+  if (pageInfo) {
+    pageInfo.textContent = `Página ${currentPage} de ${totalPages}`;
+  }
+
+  if (prevBtn) {
+    prevBtn.disabled = currentPage === 1;
+  }
+
+  if (nextBtn) {
+    nextBtn.disabled = currentPage === totalPages;
+  }
+}
+
+window.editUser = function (userId) {
+  try {
+    if (!userId) {
+      console.error("ID do usuário não fornecido");
       return;
     }
 
-    // Update pagination info
-    totalPages = paginationData.lastPage;
-    currentPage = paginationData.currentPage;
+    const editUrl = `http://localhost:3030/usuario.html?id=${userId}`;
 
-    // Render users
-    renderUsers(users);
-    renderPagination(paginationData);
-
-    usersList.style.display = "block";
-    pagination.style.display = "flex";
+    window.location.href = editUrl;
   } catch (error) {
-    console.error("Erro ao carregar usuários:", error);
-    loadingState.style.display = "none";
-    showMessage("Erro ao carregar usuários", "error");
+    console.error("Erro ao editar usuário:", error);
   }
-}
+};
 
-function renderUsers(users) {
-  const usersList = document.getElementById("users-list");
+window.deleteUser = async function (userId) {
+  const confirmed = await showConfirm("Tem certeza que deseja excluir este usuário?", {
+    title: "Confirmar Exclusão",
+    type: "warning",
+    confirmText: "Excluir",
+    cancelText: "Cancelar",
+  });
 
-  usersList.innerHTML = users
-    .map(
-      (user) => `
-    <div class="user-card">
-      <div class="user-info">
-        <div class="user-avatar">
-          ${
-            user.avatar
-              ? `<img src="${user.avatar}" alt="${user.name}" />`
-              : `<i class="fas fa-user"></i>`
-          }
-        </div>
-        <div class="user-details">
-          <h3 class="user-name">${user.name}</h3>
-          <p class="user-email">${user.email}</p>
-          <div class="user-meta">
-            <span class="user-role role-${user.role}">${getRoleLabel(user.role)}</span>
-            ${
-              user.specialization
-                ? `<span class="user-specialization">${user.specialization}</span>`
-                : ""
-            }
-          </div>
-          ${user.bio ? `<p class="user-bio">${user.bio}</p>` : ""}
-        </div>
-      </div>
-      <div class="user-actions">
-        <button onclick="editUser(${user.id})" class="btn btn-outline btn-sm">
-          <i class="fas fa-edit"></i>
-          Editar
-        </button>
-        <button onclick="confirmDeleteUser(${user.id}, '${
-        user.name
-      }')" class="btn btn-danger btn-sm">
-          <i class="fas fa-trash"></i>
-          Excluir
-        </button>
-      </div>
-    </div>
-  `
-    )
-    .join("");
-}
-
-function renderPagination(paginationData) {
-  const pagination = document.getElementById("pagination");
-  const { currentPage, lastPage, from, to, total } = paginationData;
-
-  pagination.innerHTML = `
-    <div class="pagination-info">
-      Mostrando ${from}-${to} de ${total} usuários
-    </div>
-    <div class="pagination-controls">
-      <button 
-        onclick="changePage(${currentPage - 1})" 
-        ${currentPage === 1 ? "disabled" : ""} 
-        class="btn btn-outline btn-sm"
-      >
-        <i class="fas fa-chevron-left"></i>
-        Anterior
-      </button>
-      <span class="pagination-current">
-        Página ${currentPage} de ${lastPage}
-      </span>
-      <button 
-        onclick="changePage(${currentPage + 1})" 
-        ${currentPage === lastPage ? "disabled" : ""} 
-        class="btn btn-outline btn-sm"
-      >
-        Próximo
-        <i class="fas fa-chevron-right"></i>
-      </button>
-    </div>
-  `;
-}
-
-function getRoleLabel(role) {
-  const roles = {
-    student: "Estudante",
-    instructor: "Instrutor",
-    admin: "Administrador",
-  };
-  return roles[role] || role;
-}
-
-function changePage(page) {
-  if (page >= 1 && page <= totalPages) {
-    currentPage = page;
-    loadUsers();
-  }
-}
-
-function editUser(userId) {
-  window.location.href = `/src/pages/usuario.html?id=${userId}`;
-}
-
-async function confirmDeleteUser(userId, userName) {
-  if (!confirm(`Tem certeza que deseja excluir o usuário "${userName}"?`)) {
+  if (!confirmed) {
     return;
   }
 
   try {
-    const token = localStorage.getItem("authToken");
+    const token = localStorage.getItem("jwt_token");
+
     const response = await fetch(`${apiUrl}/users/${userId}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
       },
     });
 
-    if (!response.ok) {
-      if (response.status === 401) {
-        showMessage("Token expirado. Redirecionando para login...", "error");
-        setTimeout(() => {
-          localStorage.removeItem("authToken");
-          window.location.href = "/src/pages/login.html";
-        }, 1500);
-        return;
-      }
-      throw new Error("Erro ao excluir usuário");
+    if (response.ok) {
+      createModal({
+        title: "Sucesso",
+        message: "Usuário excluído com sucesso!",
+        type: "success",
+        confirmText: "OK",
+        onConfirm: () => loadUsers(),
+      });
+    } else {
+      const data = await response.json();
+
+      createModal({
+        title: "Erro",
+        message: data.error || "Erro ao excluir usuário",
+        type: "error",
+        confirmText: "OK",
+      });
     }
-
-    showMessage("Usuário excluído com sucesso!", "success");
-    loadUsers(); // Reload the list
   } catch (error) {
-    console.error("Erro ao excluir usuário:", error);
-    showMessage(error.message || "Erro ao excluir usuário", "error");
+    createModal({
+      title: "Erro de Conexão",
+      message: "Erro de conexão ao excluir usuário",
+      type: "error",
+      confirmText: "OK",
+    });
   }
-}
-
-// Make functions globally available
-window.changePage = changePage;
-window.editUser = editUser;
-window.confirmDeleteUser = confirmDeleteUser;
+};

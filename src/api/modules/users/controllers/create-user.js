@@ -4,7 +4,7 @@ import { knex } from "../../../database/knex.js";
 import z from "zod";
 import bcrypt from "bcrypt";
 
-export async function createUser(req, res, next) {
+export async function createUser(req, res) {
   const user = req.body;
 
   const userValidation = createUserSchema.safeParse(user);

@@ -4,7 +4,7 @@ import {
   formatDate,
   showLoading,
   hideLoading,
-  showAlert,
+  createModal,
   showConfirm,
   getUserData,
 } from "./utils.js";
@@ -73,8 +73,7 @@ function displayCourseDetails() {
   if (!courseData) return;
 
   document.getElementById("course-title").textContent = courseData.name;
-  document.getElementById("course-description").textContent =
-    courseData.description;
+  document.getElementById("course-description").textContent = courseData.description;
   document.getElementById("course-level").textContent = courseData.level;
   document.getElementById("course-start-date").textContent = formatDate(
     courseData.startDate || courseData.start_date
@@ -91,11 +90,8 @@ function displayCourseDetails() {
   document.getElementById("course-start-full").textContent = formatDate(
     courseData.startDate || courseData.start_date
   );
-  document.getElementById("course-full-description").textContent =
-    courseData.description;
-  document.getElementById("course-price").textContent = formatCurrency(
-    courseData.price
-  )
+  document.getElementById("course-full-description").textContent = courseData.description;
+  document.getElementById("course-price").textContent = formatCurrency(courseData.price)
     .replace("R$", "")
     .trim();
 
@@ -120,6 +116,8 @@ function displayCourseDetails() {
 
   const currentUser = getUserData();
   const editBtn = document.getElementById("edit-btn");
+  const gerenciarUsuariosLink = document.getElementById("gerenciar-usuarios-link");
+
   if (currentUser && currentUser.role === "admin") {
     if (deleteBtn) deleteBtn.style.display = "block";
     if (editBtn) {
@@ -127,6 +125,9 @@ function displayCourseDetails() {
       editBtn.onclick = function () {
         window.location.href = `/editar-curso.html?id=${courseData.id}`;
       };
+    }
+    if (gerenciarUsuariosLink) {
+      gerenciarUsuariosLink.style.display = "block";
     }
   }
 
@@ -150,9 +151,7 @@ function updateTotal() {
   if (!courseData) return;
 
   const total = courseData.price * currentQuantity;
-  totalValueElement.textContent = formatCurrency(total)
-    .replace("R$", "")
-    .trim();
+  totalValueElement.textContent = formatCurrency(total).replace("R$", "").trim();
 }
 
 function handleQuantityChange() {
@@ -200,7 +199,12 @@ function processEnrollment() {
         Nota: A funcionalidade de matrícula está temporariamente desabilitada.
     `;
 
-  showAlert(message, "info");
+  createModal({
+    title: "Informação",
+    message: message,
+    type: "info",
+    confirmText: "OK",
+  });
 }
 
 async function handleDeleteCourse() {
@@ -208,7 +212,12 @@ async function handleDeleteCourse() {
 
   const currentUser = getUserData();
   if (!currentUser || currentUser.role !== "admin") {
-    showAlert("Você não tem permissão para excluir cursos.", "error");
+    createModal({
+      title: "Acesso Negado",
+      message: "Você não tem permissão para excluir cursos.",
+      type: "error",
+      confirmText: "OK",
+    });
     return;
   }
 
@@ -221,8 +230,7 @@ async function handleDeleteCourse() {
     const deleteButton = document.getElementById("delete-btn");
     const originalText = deleteButton.innerHTML;
 
-    deleteButton.innerHTML =
-      '<i class="fas fa-spinner fa-spin"></i> Excluindo...';
+    deleteButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Excluindo...';
     deleteButton.disabled = true;
 
     await fetchAPI(`/courses/${courseData.id}`, {
@@ -230,14 +238,25 @@ async function handleDeleteCourse() {
       body: JSON.stringify({ userId: currentUser.id }),
     });
 
-    showAlert("Curso excluído com sucesso!", "success");
-
-    setTimeout(() => {
-      window.location.href = "/";
-    }, 2000);
+    createModal({
+      title: "Sucesso",
+      message: "Curso excluído com sucesso!",
+      type: "success",
+      confirmText: "OK",
+      onConfirm: () => {
+        setTimeout(() => {
+          window.location.href = "/";
+        }, 500);
+      },
+    });
   } catch (error) {
     console.error("Erro ao excluir curso:", error);
-    showAlert("Erro ao excluir curso. Tente novamente.", "error");
+    createModal({
+      title: "Erro",
+      message: "Erro ao excluir curso. Tente novamente.",
+      type: "error",
+      confirmText: "OK",
+    });
 
     const deleteButton = document.getElementById("delete-btn");
     deleteButton.innerHTML = '<i class="fas fa-trash"></i> Excluir Curso';
@@ -304,8 +323,6 @@ const observer = new IntersectionObserver((entries) => {
 }, observerOptions);
 
 document.addEventListener("DOMContentLoaded", () => {
-  const elementsToAnimate = document.querySelectorAll(
-    ".course-info, .enrollment-card"
-  );
+  const elementsToAnimate = document.querySelectorAll(".course-info, .enrollment-card");
   elementsToAnimate.forEach((el) => observer.observe(el));
 });

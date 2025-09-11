@@ -1,10 +1,10 @@
 import z from "zod";
 
-export const createUserSchema = z
+export const updateUserSchema = z
   .object({
     name: z.string().min(1, "Nome é obrigatório"),
-    email: z.string().email("Email inválido").min(1, "Email é obrigatório"),
-    password: z.string().min(6, "Senha deve ter pelo menos 6 caracteres"),
+    email: z.email("Email inválido").min(1, "Email é obrigatório"),
+    password: z.string().min(6, "Senha deve ter pelo menos 6 caracteres").optional(),
     bio: z
       .string()
       .max(500, "Bio não pode ter mais de 500 caracteres")

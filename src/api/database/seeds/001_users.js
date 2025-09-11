@@ -19,7 +19,7 @@ export async function seed(knex) {
       password,
       role: "instructor",
       bio: "Desenvolvedora frontend com mais de 8 anos de experiência",
-      avatar: "/images/instrutores/maria-silva.jpg",
+      avatar: null,
       specialization: "JavaScript, React",
     },
     {
@@ -28,7 +28,7 @@ export async function seed(knex) {
       password,
       role: "instructor",
       bio: "Arquiteto de software especializado em aplicações React",
-      avatar: "/images/instrutores/joao-santos.jpg",
+      avatar: null,
       specialization: "React, Redux, TypeScript",
     },
     {
@@ -37,7 +37,7 @@ export async function seed(knex) {
       password,
       role: "instructor",
       bio: "Designer e desenvolvedora frontend focada em UX/UI",
-      avatar: "/images/instrutores/ana-costa.jpg",
+      avatar: null,
       specialization: "HTML, CSS, Design Responsivo",
     },
     {
@@ -46,7 +46,6 @@ export async function seed(knex) {
       password,
       role: "instructor",
       bio: "Desenvolvedor backend com expertise em Node.js e microserviços",
-      avatar: "/images/instrutores/carlos-lima.jpg",
       specialization: "Node.js, APIs, Bancos de Dados",
     },
     {
@@ -55,7 +54,7 @@ export async function seed(knex) {
       password,
       role: "instructor",
       bio: "Cientista de dados e desenvolvedora Python full-stack",
-      avatar: "/images/instrutores/lucia-ferreira.jpg",
+      avatar: null,
       specialization: "Python, Django, Data Science",
     },
     {
@@ -64,7 +63,7 @@ export async function seed(knex) {
       password,
       role: "instructor",
       bio: "Desenvolvedor frontend especializado no ecossistema Vue.js",
-      avatar: "/images/instrutores/roberto-alves.jpg",
+      avatar: null,
       specialization: "Vue.js, JavaScript, Frontend",
     },
   ];

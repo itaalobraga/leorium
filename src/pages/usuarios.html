@@ -20,7 +20,7 @@
             <span>Leorium</span>
           </div>
           <div class="nav-links">
-            <a href="index.html" class="nav-link">
+            <a href="http://localhost:3030/index.html" class="nav-link">
               <i class="fas fa-arrow-left"></i>
               Voltar aos Cursos
             </a>
@@ -41,7 +41,7 @@
           "
         >
           <h1 class="page-title">Gerenciar Usuários</h1>
-          <a href="usuario.html" class="btn btn-primary">
+          <a href="http://localhost:3030/usuario.html" class="btn btn-primary">
             <i class="fas fa-plus"></i>
             Novo Usuário
           </a>
@@ -89,9 +89,25 @@
             border-radius: 12px;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
             overflow: hidden;
+            margin-bottom: 2rem;
           "
         >
           <div id="users-list"></div>
+        </div>
+
+        <div
+          id="pagination"
+          style="display: flex; justify-content: center; align-items: center; gap: 1rem"
+        >
+          <button id="prev-btn" class="btn btn-outline" disabled>
+            <i class="fas fa-chevron-left"></i>
+            Anterior
+          </button>
+          <span id="page-info" style="color: #6b7280">Página 1 de 1</span>
+          <button id="next-btn" class="btn btn-outline" disabled>
+            Próxima
+            <i class="fas fa-chevron-right"></i>
+          </button>
         </div>
 
         <div

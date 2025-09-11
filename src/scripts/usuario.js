@@ -1,18 +1,14 @@
-import { showMessage, hideMessage, navigateWithToken } from "./utils.js";
-
-const apiUrl = "http://localhost:3000/api";
+const apiUrl = "http://localhost:3030/api";
 let isEditing = false;
 let userId = null;
 
-// Event listeners
 document.addEventListener("DOMContentLoaded", () => {
-  const token = localStorage.getItem("authToken");
+  const token = localStorage.getItem("jwt_token");
   if (!token) {
-    window.location.href = "/src/pages/login.html";
+    window.location.href = "login.html";
     return;
   }
 
-  // Parse URL params to check if we're editing
   const urlParams = new URLSearchParams(window.location.search);
   userId = urlParams.get("id");
 
@@ -20,7 +16,12 @@ document.addEventListener("DOMContentLoaded", () => {
     isEditing = true;
     document.getElementById("page-title").textContent = "Editar Usuário";
     document.getElementById("submit-btn").textContent = "Atualizar Usuário";
-    document.getElementById("password-group").style.display = "none";
+
+    const passwordGroup = document.getElementById("password-group");
+    const passwordInput = document.getElementById("password");
+    if (passwordGroup) passwordGroup.style.display = "none";
+    if (passwordInput) passwordInput.required = false;
+
     loadUser(userId);
   }
 
@@ -28,17 +29,14 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function setupEventListeners() {
-  // Form submission
   document.getElementById("user-form").addEventListener("submit", handleFormSubmit);
 
-  // Role change to show/hide specialization field
   document.getElementById("role").addEventListener("change", handleRoleChange);
 
-  // Logout button
   document.getElementById("logout-btn").addEventListener("click", (e) => {
     e.preventDefault();
-    localStorage.removeItem("authToken");
-    window.location.href = "/src/pages/login.html";
+    localStorage.removeItem("jwt_token");
+    window.location.href = "login.html";
   });
 }
 
@@ -68,18 +66,16 @@ async function handleFormSubmit(e) {
     avatar: formData.get("avatar") || null,
   };
 
-  // Add password if creating new user
   if (!isEditing) {
     userData.password = formData.get("password");
   }
 
-  // Add specialization if instructor
   if (userData.role === "instructor") {
     userData.specialization = formData.get("specialization");
   }
 
   try {
-    const token = localStorage.getItem("authToken");
+    const token = localStorage.getItem("jwt_token");
     const method = isEditing ? "PUT" : "POST";
     const url = isEditing ? `${apiUrl}/users/${userId}` : `${apiUrl}/users`;
 
@@ -96,10 +92,9 @@ async function handleFormSubmit(e) {
 
     if (!response.ok) {
       if (response.status === 401) {
-        showMessage("Token expirado. Redirecionando para login...", "error");
         setTimeout(() => {
-          localStorage.removeItem("authToken");
-          window.location.href = "/src/pages/login.html";
+          localStorage.removeItem("jwt_token");
+          window.location.href = "login.html";
         }, 1500);
         return;
       }
@@ -107,20 +102,18 @@ async function handleFormSubmit(e) {
     }
 
     const action = isEditing ? "atualizado" : "criado";
-    showMessage(`Usuário ${action} com sucesso!`, "success");
 
     setTimeout(() => {
-      window.location.href = "/src/pages/usuarios.html";
+      window.location.href = "usuarios.html";
     }, 1500);
   } catch (error) {
     console.error("Erro:", error);
-    showMessage(error.message || "Erro interno do servidor", "error");
   }
 }
 
 async function loadUser(id) {
   try {
-    const token = localStorage.getItem("authToken");
+    const token = localStorage.getItem("jwt_token");
     const response = await fetch(`${apiUrl}/users/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -129,11 +122,8 @@ async function loadUser(id) {
 
     if (!response.ok) {
       if (response.status === 401) {
-        showMessage("Token expirado. Redirecionando para login...", "error");
-        setTimeout(() => {
-          localStorage.removeItem("authToken");
-          window.location.href = "/src/pages/login.html";
-        }, 1500);
+        localStorage.removeItem("jwt_token");
+        window.location.href = "login.html";
         return;
       }
       throw new Error("Erro ao carregar usuário");
@@ -141,24 +131,32 @@ async function loadUser(id) {
 
     const user = await response.json();
 
-    // Fill form with user data
-    document.getElementById("name").value = user.name;
-    document.getElementById("email").value = user.email;
-    document.getElementById("role").value = user.role;
-    document.getElementById("bio").value = user.bio || "";
-    document.getElementById("avatar").value = user.avatar || "";
+    const nameInput = document.getElementById("name");
+    const emailInput = document.getElementById("email");
+    const roleSelect = document.getElementById("role");
+    const bioInput = document.getElementById("bio");
+    const avatarInput = document.getElementById("avatar");
 
-    // Handle specialization for instructors
+    if (nameInput) nameInput.value = user.name || "";
+    if (emailInput) emailInput.value = user.email || "";
+    if (roleSelect) roleSelect.value = user.role || "";
+    if (bioInput) bioInput.value = user.bio || "";
+    if (avatarInput) avatarInput.value = user.avatar || "";
+
     if (user.role === "instructor" && user.specialization) {
-      document.getElementById("specialization-group").style.display = "block";
-      document.getElementById("specialization").value = user.specialization;
-      document.getElementById("specialization").required = true;
+      const specializationGroup = document.getElementById("specialization-group");
+      const specializationInput = document.getElementById("specialization");
+
+      if (specializationGroup) specializationGroup.style.display = "block";
+      if (specializationInput) {
+        specializationInput.value = user.specialization;
+        specializationInput.required = true;
+      }
     }
   } catch (error) {
     console.error("Erro ao carregar usuário:", error);
-    showMessage("Erro ao carregar dados do usuário", "error");
     setTimeout(() => {
-      window.location.href = "/src/pages/usuarios.html";
+      window.location.href = "usuarios.html";
     }, 2000);
   }
 }

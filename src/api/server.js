@@ -4,6 +4,7 @@ import { fileURLToPath } from "url";
 import cors from "cors";
 
 import { routes } from "./routes/index.js";
+import { swaggerUi, specs } from "./config/swagger.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -21,6 +22,14 @@ app.use("/styles", express.static(path.join(__dirname, "..", "styles")));
 app.use("/assets", express.static(path.join(__dirname, "..", "assets")));
 
 app.use("/api", routes);
+
+app.use(
+  "/api-docs",
+  swaggerUi.serve,
+  swaggerUi.setup(specs, {
+    customSiteTitle: "Leorium API Docs",
+  })
+);
 
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "..", "pages", "index.html"));

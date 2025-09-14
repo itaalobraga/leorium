@@ -1,6 +1,5 @@
 import z from "zod";
 import { knex } from "../../../database/knex.js";
-import { existsInDb } from "../../../utils/exists-in-db.js";
 import { createCourseSchema } from "../schemas/create-course.js";
 
 export async function createCourse(req, res, next) {

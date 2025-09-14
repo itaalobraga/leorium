@@ -4,8 +4,6 @@ import { paginate } from "../../../utils/paginate.js";
 export async function getCourses(req, res, next) {
   const { page, limit } = req.query;
 
-  const { search } = req.query;
-
   try {
     const query = knex("courses").select("*");
 
@@ -21,7 +19,12 @@ export async function getCourses(req, res, next) {
 
     return res
       .status(200)
-      .json({ results: normalizedData, page: currentPage, total, limit: perPage });
+      .json({
+        results: normalizedData,
+        page: currentPage,
+        total,
+        limit: perPage,
+      });
   } catch (error) {
     console.error(error);
     next();

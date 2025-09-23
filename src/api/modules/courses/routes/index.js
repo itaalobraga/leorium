@@ -1,21 +1,18 @@
 import { Router } from "express";
-import { createCourse } from "../controllers/create-course.js";
-import { getCourses } from "../controllers/get-courses.js";
-import { getCourseById } from "../controllers/get-course-by-id.js";
-import { deleteCourse } from "../controllers/delete-course.js";
+import { CourseController } from "../controllers/CourseController.js";
 import { verifyToken } from "../../auth/middlewares/verify-token.js";
-import { updateCourse } from "../controllers/update-course.js";
 
 const coursesRoutes = Router();
+const courseController = new CourseController();
 
-coursesRoutes.post("/", verifyToken, createCourse);
+coursesRoutes.post("/", verifyToken, courseController.createCourse);
 
-coursesRoutes.get("/", getCourses);
+coursesRoutes.get("/", courseController.getCourses);
 
-coursesRoutes.get("/:id", verifyToken, getCourseById);
+coursesRoutes.get("/:id", verifyToken, courseController.getCourseById);
 
-coursesRoutes.delete("/:id", verifyToken, deleteCourse);
+coursesRoutes.delete("/:id", verifyToken, courseController.deleteCourse);
 
-coursesRoutes.patch("/:id", verifyToken, updateCourse);
+coursesRoutes.patch("/:id", verifyToken, courseController.updateCourse);
 
 export { coursesRoutes };

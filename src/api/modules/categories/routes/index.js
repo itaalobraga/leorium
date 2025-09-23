@@ -1,12 +1,12 @@
 import { Router } from "express";
-import { createCategory } from "../controllers/create-category.js";
+import { CategoryController } from "../controllers/CategoryController.js";
 import { verifyToken } from "../../auth/middlewares/verify-token.js";
-import { getCategories } from "../controllers/get-categories.js";
 
 const categoriesRoutes = Router();
+const categoryController = new CategoryController();
 
-categoriesRoutes.post("/", verifyToken, createCategory);
+categoriesRoutes.post("/", verifyToken, categoryController.createCategory);
 
-categoriesRoutes.get("/", verifyToken, getCategories);
+categoriesRoutes.get("/", verifyToken, categoryController.getCategories);
 
 export { categoriesRoutes };

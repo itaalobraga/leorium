@@ -6,7 +6,6 @@
   "type": "module",
   "scripts": {
     "start": "node --watch ./src/api/server.js",
-    "dev": "nodemon ./src/api/server.js",
     "migrate": "knex migrate:latest",
     "migrate:make": "knex migrate:make",
     "migrate:rollback": "knex migrate:rollback",

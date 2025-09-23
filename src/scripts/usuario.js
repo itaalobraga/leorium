@@ -1,3 +1,5 @@
+import { createModal } from "./utils.js";
+
 const apiUrl = "http://localhost:3030/api";
 let isEditing = false;
 let userId = null;
@@ -29,7 +31,9 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function setupEventListeners() {
-  document.getElementById("user-form").addEventListener("submit", handleFormSubmit);
+  document
+    .getElementById("user-form")
+    .addEventListener("submit", handleFormSubmit);
 
   document.getElementById("role").addEventListener("change", handleRoleChange);
 
@@ -92,22 +96,47 @@ async function handleFormSubmit(e) {
 
     if (!response.ok) {
       if (response.status === 401) {
-        setTimeout(() => {
-          localStorage.removeItem("jwt_token");
-          window.location.href = "login.html";
-        }, 1500);
+        createModal({
+          title: "Sessão Expirada",
+          message: "Sua sessão expirou. Faça login novamente.",
+          type: "warning",
+          confirmText: "OK",
+          onConfirm: () => {
+            localStorage.removeItem("jwt_token");
+            window.location.href = "login.html";
+          },
+        });
         return;
       }
-      throw new Error(result.error || "Erro ao processar solicitação");
+
+      createModal({
+        title: "Erro",
+        message: result.error || "Erro ao processar solicitação",
+        type: "error",
+        confirmText: "OK",
+      });
+      return;
     }
 
     const action = isEditing ? "atualizado" : "criado";
 
-    setTimeout(() => {
-      window.location.href = "usuarios.html";
-    }, 1500);
+    createModal({
+      title: "Sucesso",
+      message: `Usuário ${action} com sucesso!`,
+      type: "success",
+      confirmText: "OK",
+      onConfirm: () => {
+        window.location.href = "usuarios.html";
+      },
+    });
   } catch (error) {
     console.error("Erro:", error);
+    createModal({
+      title: "Erro de Conexão",
+      message: "Erro de conexão ao processar solicitação",
+      type: "error",
+      confirmText: "OK",
+    });
   }
 }
 
@@ -144,7 +173,9 @@ async function loadUser(id) {
     if (avatarInput) avatarInput.value = user.avatar || "";
 
     if (user.role === "instructor" && user.specialization) {
-      const specializationGroup = document.getElementById("specialization-group");
+      const specializationGroup = document.getElementById(
+        "specialization-group"
+      );
       const specializationInput = document.getElementById("specialization");
 
       if (specializationGroup) specializationGroup.style.display = "block";
